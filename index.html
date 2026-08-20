@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Interactive accident risk zones and risk-weighted journey paths"
+    />
+    <title>Risk Zone Analysis</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar" id="sidebar" aria-label="Map controls">
+        <header class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <span>SSU</span>
+          </div>
+          <div>
+            <p class="eyebrow">EIS Pilot Road Accident Mapping</p>
+            <h1>Risk Zone Analysis</h1>
+          </div>
+        </header>
+
+        <section class="control-section radius-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow parameter-eyebrow">Parameter</p>
+              <h2>Accident radius</h2>
+            </div>
+            <output class="radius-badge" id="radiusOutput" for="radiusInput"
+              >250 m</output
+            >
+          </div>
+          <input
+            id="radiusInput"
+            class="range-input"
+            type="range"
+            min="50"
+            max="20000"
+            step="50"
+            value="250"
+            aria-label="Accident buffer radius in metres"
+          />
+          <div class="range-labels" aria-hidden="true">
+            <span>50 m</span><span>20 km</span>
+          </div>
+          <p class="help-text">
+            Note: Overlapping buffers are merged. A darker zone contains more
+            accident cases.
+          </p>
+        </section>
+
+        <section class="stats-grid" aria-label="Analysis summary">
+          <article class="stat-card">
+            <span class="stat-value" id="caseCount">—</span>
+            <span class="stat-label">Cases</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-value" id="accidentCount">—</span>
+            <span class="stat-label">Accidents</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-value" id="zoneCount">—</span>
+            <span class="stat-label">Risk zones</span>
+          </article>
+          <article class="stat-card accent-card">
+            <span class="stat-value" id="maxIntensity">—</span>
+            <span class="stat-label">Peak intensity</span>
+          </article>
+        </section>
+
+        <section class="control-section">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">Visibility</p>
+              <h2>Map layers</h2>
+            </div>
+          </div>
+          <div class="toggle-list">
+            <label class="toggle-row">
+              <span><i class="layer-swatch zone-swatch"></i>Risk zones</span>
+              <input id="toggleZones" type="checkbox" checked />
+              <i class="switch" aria-hidden="true"></i>
+            </label>
+            <label class="toggle-row">
+              <span
+                ><i class="layer-swatch point-swatch"></i>Accident points</span
+              >
+              <input id="toggleAccidents" type="checkbox" checked />
+              <i class="switch" aria-hidden="true"></i>
+            </label>
+            <label class="toggle-row">
+              <span
+                ><i class="layer-swatch risk-path-swatch"></i>Risky paths</span
+              >
+              <input id="toggleRiskPaths" type="checkbox" checked />
+              <i class="switch" aria-hidden="true"></i>
+            </label>
+            <label class="toggle-row">
+              <span
+                ><i class="layer-swatch route-swatch"></i>All journey
+                paths</span
+              >
+              <input id="toggleRoutes" type="checkbox" />
+              <i class="switch" aria-hidden="true"></i>
+            </label>
+            <label class="toggle-row">
+              <span
+                ><i class="layer-swatch endpoint-swatch"></i>Start &amp;
+                destination</span
+              >
+              <input id="toggleEndpoints" type="checkbox" />
+              <i class="switch" aria-hidden="true"></i>
+            </label>
+          </div>
+        </section>
+
+        <section class="control-section legend-section">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">Frequency</p>
+              <h2>Risk intensity</h2>
+            </div>
+          </div>
+          <div class="legend-bar" aria-hidden="true">
+            <i style="--legend-color: #fed976"></i
+            ><i style="--legend-color: #feb24c"></i
+            ><i style="--legend-color: #fd8d3c"></i
+            ><i style="--legend-color: #f03b20"></i
+            ><i style="--legend-color: #bd0026"></i>
+          </div>
+          <div class="legend-labels">
+            <span>1</span><span>2</span><span>3–4</span><span>5–7</span
+            ><span>8+</span>
+          </div>
+          <p class="help-text">
+            Paths use the same logic: color reflects accident buffers touching
+            each route section.
+          </p>
+        </section>
+
+        <footer class="sidebar-footer">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">Loading local data…</span>
+        </footer>
+      </aside>
+
+      <section class="map-panel" aria-label="Interactive risk map">
+        <div id="map"></div>
+        <button
+          class="sidebar-toggle"
+          id="sidebarToggle"
+          type="button"
+          aria-label="Toggle map controls"
+          aria-expanded="true"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <div class="map-title-card">
+          <p class="eyebrow">Social Security Unit</p>
+          <strong>Created by Tasbiul</strong>
+        </div>
+        <div
+          class="processing-pill"
+          id="processingPill"
+          role="status"
+          aria-live="polite"
+        >
+          <span class="spinner"></span>Recalculating risk…
+        </div>
+      </section>
+    </main>
+
+    <div class="error-panel" id="errorPanel" hidden>
+      <div>
+        <p class="eyebrow">Unable to load map data</p>
+        <h2>Start a local web server in this folder</h2>
+        <p id="errorMessage">
+          Browsers block CSV loading when this file is opened directly.
+        </p>
+        <code>python3 -m http.server 8000</code>
+        <p>
+          Then open <a href="http://localhost:8000">http://localhost:8000</a>.
+        </p>
+      </div>
+    </div>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7.2.0/turf.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
