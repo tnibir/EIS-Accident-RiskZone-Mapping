@@ -2,6 +2,14 @@
 
 An interactive browser map built from `accidents.csv` and `path.csv`.
 
+## Access the live website
+
+Open the published application here:
+
+**[Launch the EIS Accident Risk Zone Mapping website](https://tnibir.github.io/EIS-Accident-RiskZone-Mapping/)**
+
+No installation or download is required. Open the link in a modern web browser and wait for the map and local dataset to load. An internet connection is required for the map tiles and external JavaScript libraries.
+
 ## Run it
 
 From the repository root, start a small local web server:
