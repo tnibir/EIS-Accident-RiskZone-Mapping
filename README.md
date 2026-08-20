@@ -10,9 +10,9 @@ Open the published application here:
 
 No installation or download is required. Open the link in a modern web browser and wait for the map and local dataset to load. An internet connection is required for the map tiles and external JavaScript libraries.
 
-## Run it
+## Run it Locally
 
-From the repository root, start a small local web server:
+Dowload the project and From the repository root, start a small local web server:
 
 ```bash
 python3 -m http.server 8000
