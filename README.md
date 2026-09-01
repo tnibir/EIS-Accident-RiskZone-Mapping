@@ -8,17 +8,17 @@ Open the published application here:
 
 **[Launch the EIS Accident Risk Zone Mapping website](https://tnibir.github.io/EIS-Accident-RiskZone-Mapping/)**
 
-No installation or download is required. Open the link in a modern web browser and wait for the map and local dataset to load. An internet connection is required for the map tiles and external JavaScript libraries.
+No installation, download, or map API key is required. Open the link in a modern web browser and wait for the map and local dataset to load. An internet connection is required for the free OpenStreetMap-based tiles and external JavaScript libraries.
 
 ## Run it Locally
 
-Dowload the project and From the repository root, start a small local web server:
+Download the project, then from the repository root start a small local web server:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Then open [http://localhost:8000/WebApp/](http://localhost:8000/WebApp/) in a browser. An internet connection is needed for the basemap tiles and the pinned Leaflet, Papa Parse, and Turf libraries.
+Then open [http://localhost:8000/](http://localhost:8000/) in a browser. An internet connection is needed for the free, keyless basemap tiles and the pinned Leaflet, Papa Parse, and Turf libraries.
 
 ## How the analysis works
 
@@ -29,6 +29,8 @@ Then open [http://localhost:8000/WebApp/](http://localhost:8000/WebApp/) in a br
 - **Matching and tooltips:** routes and point records are matched on `File`. Hovering an accident point, journey path, or risky path shows its `File` and `Layer` values.
 
 The radius can be changed from 50 m to 20 km. Use the sidebar switches to show or hide risk zones, accident points, risky paths, complete paths, and endpoints. Use the layers button in the map's upper-right corner to change the basemap.
+
+The available OpenStreetMap, CARTO Light, and OpenTopoMap basemaps are free to access and do not require an API key. Their required provider attribution remains visible on the map.
 
 ## Files
 

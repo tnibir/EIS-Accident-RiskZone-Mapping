@@ -69,10 +69,6 @@ function initialiseMap() {
       maxZoom: 17,
       attribution: "Map data &copy; OpenStreetMap contributors, SRTM | Map style &copy; OpenTopoMap",
     }),
-    "Satellite": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-      maxZoom: 19,
-      attribution: "Tiles &copy; Esri",
-    }),
   };
 
   state.map = L.map("map", {
@@ -80,7 +76,7 @@ function initialiseMap() {
     zoom: 9,
     zoomControl: false,
     preferCanvas: true,
-    layers: [baseMaps["Carto Light"]],
+    layers: [baseMaps.OpenStreetMap],
   });
 
   L.control.zoom({ position: "bottomright" }).addTo(state.map);
